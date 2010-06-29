@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+require File.join(File.dirname(__FILE__), 'trollop')
+require File.join(File.dirname(__FILE__), '../lib/cossincalc')
+require 'date'
+
+opts = Trollop.options do
+  banner <<-EOT
+Usage: cossincalc [options] [variables]
+
+Variable definitions should follow a certain pattern.
+First should be given the name of the variable (ie. a, b, c, A, B or C) immediately followed by an equals sign (=) which is again followed by the actual value of the variable.
+Each variable definition should be separated with a space and you should therefore never make whitespace inside a variable definiton.
+
+Examples:
+  cossincalc c=5 C=90 a=3
+  cossincalc -p 3 A=60 B=60 c=6.2
+
+Options:
+EOT
+  
+  opt :degree,    "Use degrees as the angle unit"
+  opt :gon,       "Use gon as the angle unit"
+  opt :radian,    "Use radians as the angle unit"
+  opt :directory, "The path to the output directory to be created", :default => "cossincalc-calculation-#{Date.today}", :short => '-o'
+  opt :precision, "The number of digits to show in the result after the decimal separator", :default => 2
+end
+
+sides, angles, angle_opts = {}, {}, {}
+
+[:degree, :gon, :radian].each { |key| angle_opts[key] = opts[key] if opts[key] }
+angle_opts.each do |key, value|
+  Trollop.die "Only one angle unit is allowed" unless angles[:unit].nil?
+  angles[:unit] = key
+end
+
+angles[:unit] = :degree if angles[:unit].nil?
+
+ARGV.select { |arg| arg.include?('=') }.each do |arg|
+  var, val = *arg.split('=')
+  
+  if var == var.upcase
+    angles[var.downcase.to_sym] = val
+  else
+    sides[var.to_sym] = val
+  end
+end
+
+t = CosSinCalc::Triangle.new(sides, angles)
+validation = t.calculate!
+unless validation == true
+  Trollop.die validation.messages.join("  ")[0..-2] # Avoid double-period.
+end
+
+begin
+  Dir.mkdir(opts[:directory])
+rescue Errno::EEXIST
+  Trollop.die "The specified directory already exists"
+end
+
+filename = File.join(opts[:directory], 'result')
+if CosSinCalc::Triangle::Formatter::Latex.new(t.humanize(opts[:precision])).save_pdf(filename)
+  puts "Success: The result can be found in #{filename}.pdf."
+end
