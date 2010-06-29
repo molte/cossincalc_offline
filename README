@@ -1,0 +1,5 @@
+CosSinCalc Triangle Calculator
+command line utility
+
+An offline version of the CosSinCalc Triangle Calculator (avialable at cossincalc.com)
+that renders a PDF page with the results, formulae and a drawing of the triangle.
