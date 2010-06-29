@@ -9,4 +9,5 @@ require File.join(File.dirname(__FILE__), 'cossincalc/triangle/variable_hash')
 require File.join(File.dirname(__FILE__), 'cossincalc/triangle')
 
 module CosSinCalc
+  VERSION = "1.0.0"
 end
