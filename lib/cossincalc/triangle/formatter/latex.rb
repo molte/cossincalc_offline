@@ -8,23 +8,23 @@ module CosSinCalc
           @triangle  = formatter.triangle
         end
         
-        # Saves the generated LaTeX to a TeX file.
-        # The filename should be provided without the .tex extension.
-        def save_tex(filename)
-          if @triangle.alt
-            content = document <<-EOT
-#{document_content("#{filename}-2")}
+        # Returns the generated LaTeX code.
+        def to_tex(filename = nil)
+          document(@triangle.alt ? (<<-EOT) : document_content(filename))
+#{document_content("#{filename}-2" if filename)}
 
 \\newpage
 \\section*{Alternative triangle}
 Another triangle can be constructed based on the variables given.\\\\[0.2 cm]
 
-#{Latex.new(@triangle.alt.humanize(f.precision)).document_content("#{filename}-1")}
+#{Latex.new(@triangle.alt.humanize(f.precision)).document_content("#{filename}-1" if filename)}
 EOT
-          else
-            content = document document_content(filename)
-          end
-          File.open("#{filename}.tex", 'w') { |f| f.write(content) }
+        end
+        
+        # Saves the generated LaTeX to a TeX file.
+        # The filename should be provided without the .tex extension.
+        def save_tex(filename)
+          File.open("#{filename}.tex", 'w') { |f| f.write(to_tex(filename)) }
         end
         
         # Saves the generated LaTeX to a TeX file and then converts it using pdflatex.
@@ -35,7 +35,7 @@ EOT
         end
         
         # Returns the content of the LaTeX document.
-        def document_content(image_filename)
+        def document_content(image_filename = nil)
           variable_table + "\\\\[0.2 cm]\n\n" + equations + "\n\n" + drawing(image_filename)
         end
         
@@ -94,9 +94,10 @@ EOT
         end
         
         # Saves the associated drawing and returns the embedding LaTeX code.
-        def drawing(filename)
-          CosSinCalc::Triangle::Drawing.new(f).save_png(filename)
-          "\\begin{center}\n\\includegraphics[scale=0.4]{#{filename}}\n\\end{center}"
+        # If no filename is given no image will be saved (can be used in testing).
+        def drawing(filename = nil)
+          CosSinCalc::Triangle::Drawing.new(f).save_png(filename) if filename
+          "\\begin{center}\n\\includegraphics[scale=0.4]{#{filename || 'placeholder'}}\n\\end{center}"
         end
         
         # Wraps the given LaTeX content into a LaTeX document ready to write to filesystem.
