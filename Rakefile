@@ -12,7 +12,7 @@ task :publish do
   verbose(true) do
     sh "git tag v#{CosSinCalc::VERSION}"
     sh "git push origin master --tags"
-    sh "gem build mustache.gemspec"
-    sh "gem push mustache-#{CosSinCalc::VERSION}.gem"
+    sh "gem build cossincalc.gemspec"
+    sh "gem push cossincalc-#{CosSinCalc::VERSION}.gem"
   end
 end
