@@ -11,13 +11,13 @@ module CosSinCalc
         # Returns the generated LaTeX code.
         def to_tex(filename = nil)
           document(@triangle.alt ? (<<-EOT) : document_content(filename))
-#{document_content("#{filename}-2" if filename)}
+#{document_content(filename ? filename + '-1' : nil)}
 
 \\newpage
 \\section*{Alternative triangle}
 Another triangle can be constructed based on the variables given.\\\\[0.2 cm]
 
-#{Latex.new(@triangle.alt.humanize(f.precision)).document_content("#{filename}-1" if filename)}
+#{Latex.new(@triangle.alt.humanize(f.precision)).document_content(filename ? filename + '-2' : nil)}
 EOT
         end
         
@@ -83,7 +83,7 @@ EOT
             (match[0] == ?@ ? format_angle(f.angle(v), angle_unit) : f.side(v))
           end.split('=').reverse.join('=')
           
-          symbols + ' &\Rightarrow ' + values
+          symbols + ' &= ' + values
         end
         
         # Returns the list of equations performed during calculation.
