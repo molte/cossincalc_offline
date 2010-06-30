@@ -82,9 +82,14 @@ class TriangleTest < Test::Unit::TestCase
     assert_in_delta (Math::PI/2), t2.angle(:a), 0.00001
     assert_equal "100.00",        t2.humanize.angle(:a)
     
-    t3 = CosSinCalc::Triangle.new({}, { :a => (Math::PI/2).to_s })
+    t3 = CosSinCalc::Triangle.new({}, { :a => (Math::PI/2).to_s, :unit => :radian })
     assert_in_delta (Math::PI/2), t3.angle(:a), 0.00001
     assert_equal "1.57",          t3.humanize.angle(:a)
+  end
+  
+  def test_default_angle_unit
+    t = CosSinCalc::Triangle.new({ :a => "5.00", :b => "5.00" }, { :c => "60.00" })
+    assert_equal :degree, t.angles.unit
   end
   
   def test_number_parsing

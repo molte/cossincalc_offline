@@ -8,12 +8,18 @@ module CosSinCalc
     attr_reader :equations # Steps performed to calculate the result.
     
     # Initializes a triangle object with the given sides and angles and an optional reference to an alternative triangle.
+    # 
+    # The sides and angles may be given either as a VariableHash object or an ordinary hash.
+    # The angle unit may be specified inside the given_angles hash (using the key :unit and value either :degree, :gon or :radian).
+    # If no angle unit is given it defaults to :degree.
+    # If a hash is used then value parsing and conversion will only occur if the values are provided as strings.
+    # Float angle values are expected to be radians no matter the given angle unit.
     def initialize(given_sides, given_angles, alternative = nil)
       initialize_variables
       
       given_sides.each { |v, value| side[v] = Formatter.parse(value) }
       
-      angles.unit = (given_angles.respond_to?(:unit) ? given_angles.unit : given_angles.delete(:unit)) || :radian
+      angles.unit = (given_angles.respond_to?(:unit) ? given_angles.unit : given_angles.delete(:unit)) || :degree
       given_angles.each { |v, value| angle[v] = Formatter.parse_angle(value, angles.unit) }
       
       @alt = alternative
@@ -55,7 +61,7 @@ module CosSinCalc
     # Returns the length of the line going from the corner to the middle of the opposite side.
     def median(v)
       require_calculation
-      Math.sqrt((2 * sq(sides(rest(v))).inject(:+) - sq(side(v))) / 4)
+      Math.sqrt((2 * sq(sides(rest(v))).inject(&:+) - sq(side(v))) / 4)
     end
     
     # Returns the length of the line between a corner and the opposite side which bisects the angle at the corner.
@@ -74,7 +80,7 @@ module CosSinCalc
     # Returns the circumference of the triangle.
     def circumference
       require_calculation
-      sides(VARIABLES).inject(:+)
+      sides(VARIABLES).inject(&:+)
     end
     
     # Executes the given block for each variable symbol.

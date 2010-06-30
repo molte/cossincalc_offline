@@ -19,7 +19,7 @@ module CosSinCalc
       
       # Calculates the value of an angle when all the sides are known.
       def calculate_angle_by_sides(v, r)
-        acos (sq(sides(r)).inject(:+) - sq(side(v))) / (2 * sides(r).inject(:*))
+        acos (sq(sides(r)).inject(&:+) - sq(side(v))) / (2 * sides(r).inject(&:*))
       end
       
       # Add a calculation step to the list of equations performed.
@@ -52,8 +52,8 @@ module CosSinCalc
         each do |v, r|
           if angle(v)
             unless side(v)
-              side[v] = sqrt sq(sides(r)).inject(:+) -
-                2 * sides(r).inject(:*) * cos(angle(v))
+              side[v] = sqrt sq(sides(r)).inject(&:+) -
+                2 * sides(r).inject(&:*) * cos(angle(v))
               equation('$1=\sqrt{$2^2+$3^2-2 * $2 * $3 * \cos(@1)}', v, *r)
               calculate_three_angles
               break
@@ -101,7 +101,7 @@ module CosSinCalc
       def calculate_last_angle
         each do |v, r|
           unless angle(v)
-            angle[v] = PI - angles(r).inject(:+)
+            angle[v] = PI - angles(r).inject(&:+)
             equation('@1=@pi-@2-@3', v, *r)
             break
           end
