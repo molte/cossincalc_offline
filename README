@@ -1,9 +1,0 @@
-CosSinCalc Triangle Calculator
-command line utility
-
-An offline version of the CosSinCalc Triangle Calculator (avialable at cossincalc.com)
-that renders a PDF page with the results, formulae and a drawing of the triangle.
-
-Dependencies: LaTeX (including the amsmath, amsfonts and graphicx packages) and ImageMagick.
-
-Copyright (c) 2010 Molte Emil Strange Andersen, released under the MIT license.
