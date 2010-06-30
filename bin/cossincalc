@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 
+$:.unshift(File.expand_path(File.dirname(__FILE__) + '/../lib'))
+
 require File.join(File.dirname(__FILE__), 'trollop')
-require File.join(File.dirname(__FILE__), '../lib/cossincalc')
-require 'date'
+require 'cossincalc'
 
 opts = Trollop.options do
+  version "CosSinCalc Triangle Calculator version #{CosSinCalc::VERSION}"
   banner <<-EOT
 Usage: cossincalc [options] [variables]
 
@@ -22,7 +24,7 @@ EOT
   opt :degree,    "Use degrees as the angle unit"
   opt :gon,       "Use gon as the angle unit"
   opt :radian,    "Use radians as the angle unit"
-  opt :directory, "The path to the output directory to be created", :default => "cossincalc-calculation-#{Date.today}", :short => '-o'
+  opt :directory, "The path to the output directory to be created", :default => "cossincalc-calculation-#{Time.now.strftime('%Y-%m-%d')}", :short => '-o'
   opt :precision, "The number of digits to show in the result after the decimal separator", :default => 2
 end
 
