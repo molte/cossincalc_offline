@@ -31,7 +31,7 @@ EOT
         # The filename should be provided without the .pdf extension.
         def save_pdf(filename)
           save_tex(filename)
-          `pdflatex \"#{filename}.tex\" --output-directory #{File.dirname(filename)}`
+          `pdflatex -output-directory #{File.dirname(filename)} \"#{filename}.tex\"`
         end
         
         # Returns the content of the LaTeX document.
