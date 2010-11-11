@@ -107,6 +107,7 @@ EOT
 \\usepackage{amsmath}
 \\usepackage{amsfonts}
 \\usepackage{graphicx}
+\\usepackage{grffile}
 
 \\DeclareMathSymbol{*}{\\mathbin}{symbols}{"01}
 \\newcommand{\\unit}[1]{\\ensuremath{\\, \\mathrm{#1}}}
