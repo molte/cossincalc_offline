@@ -61,7 +61,7 @@ rescue Errno::EEXIST
   Trollop.die "The specified directory already exists" unless opts[:force]
 end
 
-filename = File.join(opts[:directory], 'result')
+filename = File.join(opts[:directory].gsub('\\', '/'), 'result')
 if CosSinCalc::Triangle::Formatter::Latex.new(t.humanize(opts[:precision])).save_pdf(filename)
   puts "Success: The result can be found in #{filename}.pdf."
 end
