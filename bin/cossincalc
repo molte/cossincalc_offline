@@ -25,6 +25,7 @@ EOT
   opt :gon,       "Use gon as the angle unit"
   opt :radian,    "Use radians as the angle unit"
   opt :directory, "The path to the output directory to be created", :default => "cossincalc-calculation-#{Time.now.strftime('%Y-%m-%d')}", :short => '-o'
+  opt :force,     "Force calculation, even if the directory already exists", :default => false
   opt :precision, "The number of digits to show in the result after the decimal separator", :default => 2
 end
 
@@ -57,7 +58,7 @@ end
 begin
   Dir.mkdir(opts[:directory])
 rescue Errno::EEXIST
-  Trollop.die "The specified directory already exists"
+  Trollop.die "The specified directory already exists" unless opts[:force]
 end
 
 filename = File.join(opts[:directory], 'result')
