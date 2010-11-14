@@ -31,7 +31,7 @@ EOT
         # The filename should be provided without the .pdf extension.
         def save_pdf(filename)
           save_tex(filename)
-          `pdflatex -output-directory \"#{File.dirname(filename)}\" \"#{filename}.tex\"`
+          Dir.chdir(File.dirname(filename)) { `pdflatex "#{filename}.tex"` }
         end
         
         # Returns the content of the LaTeX document.
@@ -97,7 +97,7 @@ EOT
         # If no filename is given no image will be saved (can be used in testing).
         def drawing(filename = nil)
           CosSinCalc::Triangle::Drawing.new(f).save_png(filename) if filename
-          "\\begin{center}\n\\includegraphics[scale=0.4]{#{filename || 'placeholder'}}\n\\end{center}"
+          "\\begin{center}\n\\includegraphics[scale=0.4]{#{filename ? File.basename(filename) : 'placeholder'}}\n\\end{center}"
         end
         
         # Wraps the given LaTeX content into a LaTeX document ready to write to filesystem.
