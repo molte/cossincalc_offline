@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://cossincalc.com/"
   s.email       = "molte@cossincalc.com"
   s.author      = "Molte Emil Strange Andersen"
-  s.files       = Dir[ "README", "MIT-LICENSE", "Rakefile", "lib/**/*", "bin/*" ]
+  s.files       = Dir[ "README.markdown", "MIT-LICENSE", "Rakefile", "lib/**/*", "bin/*" ]
   s.executables = [ "cossincalc" ]
   s.description = <<-EOT
 CosSinCalc is a web application able to calculate the variables of a triangle. The live site is located at http://cossincalc.com/. This is an offline version of the calculator.

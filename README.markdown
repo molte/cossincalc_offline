@@ -109,4 +109,4 @@ In order for this to work, you must have [Ruby](http://www.ruby-lang.org/) and [
 Feature requests, ideas, questions etc. is recieved at <http://getsatisfaction.com/cossincalc>.  
 Bugs should be submitted to the [issue tracker](http://github.com/molte/cossincalc_offline/issues).
 
-Copyright (c) 2010 Molte Emil Strange Andersen, released under the MIT license.
+Copyright (c) 2010-2011 Molte Emil Strange Andersen, released under the MIT license.
