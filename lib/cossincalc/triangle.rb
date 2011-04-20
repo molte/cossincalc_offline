@@ -54,8 +54,8 @@ module CosSinCalc
     # Returns the length of the line which starts at the corner and is perpendicular with the opposite side.
     def altitude(v)
       require_calculation
-      r = rest(v)
-      Math.sin(angle(r[0])) * side(r[1])
+      r1, r2 = *rest(v)
+      Math.sin(angle(r1)) * side(r2)
     end
     
     # Returns the length of the line going from the corner to the middle of the opposite side.
@@ -67,14 +67,15 @@ module CosSinCalc
     # Returns the length of the line between a corner and the opposite side which bisects the angle at the corner.
     def angle_bisector(v)
       require_calculation
-      r = rest(v)
-      Math.sin(angle(r[0])) * side(r[1]) / Math.sin(angle(r[1]) + angle(v) / 2)
+      r1, r2 = *rest(v)
+      Math.sin(angle(r1)) * side(r2) / Math.sin(angle(r2) + angle(v) / 2)
     end
     
     # Returns the area of the triangle.
     def area
       require_calculation
-      side(VARIABLES[0]) * side(VARIABLES[1]) * Math.sin(angle(VARIABLES[2])) / 2
+      v1, v2, v3 = *VARIABLES
+      side(v1) * side(v2) * Math.sin(angle(v3)) / 2
     end
     
     # Returns the circumference of the triangle.

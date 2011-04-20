@@ -19,6 +19,16 @@ module CosSinCalc
       def amount
         self.values.compact.size
       end
+      
+      # Returns an array of variables whose values are known.
+      def known(vars = CosSinCalc::Triangle::VARIABLES)
+        vars.reject { |v| !self[v] }
+      end
+      
+      # Returns an array of variables whose values are unknown.
+      def unknown(vars = CosSinCalc::Triangle::VARIABLES)
+        vars.reject { |v| self[v] }
+      end
     end
   end
 end

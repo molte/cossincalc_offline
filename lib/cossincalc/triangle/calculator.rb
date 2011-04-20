@@ -29,8 +29,9 @@ module CosSinCalc
       end
       
       private
-      def each(*args, &block)
-        @triangle.each(*args, &block)
+      # Returns the first variable in the given array and the rest of the variables separately.
+      def first(vars)
+        return vars.first, rest(vars.first)
       end
       
       def sq(value)
@@ -39,73 +40,54 @@ module CosSinCalc
       
       # Calculates all three angles when all three sides are known.
       def calculate_three_angles
-        each do |v, r|
-          unless angle(v)
-            angle[v] = calculate_angle_by_sides(v, r)
-            equation('@1=\arccos\left(\frac{$2^2+$3^2-$1^2}{2 * $2 * $3}\right)', v, *r)
-          end
+        each(angles.unknown) do |v, r|
+          angle[v] = calculate_angle_by_sides(v, r)
+          equation('@1=\arccos\left(\frac{$2^2+$3^2-$1^2}{2 * $2 * $3}\right)', v, *r)
         end
       end
       
       # Calculates two unknown angles when two sides and one angle are known.
       def calculate_two_angles
-        each do |v, r|
-          if angle(v)
-            unless side(v)
-              side[v] = sqrt sq(sides(r)).inject(&:+) -
-                2 * sides(r).inject(&:*) * cos(angle(v))
-              equation('$1=\sqrt{$2^2+$3^2-2 * $2 * $3 * \cos(@1)}', v, *r)
-              calculate_three_angles
-              break
-            end
-            
-            each(r) do |v2|
-              if side(v2)
-                angle[v2] = asin sin(angle(v)) * side(v2) / side(v)
-                equation('@2=\arcsin\left(\frac{\sin(@1) * $2}{$1}\right)', v, v2)
-                
-                if ambiguous_case?(v, v2)
-                  @alt = CosSinCalc::Triangle.new(sides, angles, self)
-                  @alt.angle[v2] = PI - angle(v2)
-                  @alt.equation('@2=@pi-\arcsin\left(\frac{\sin(@1) * $2}{$1}\right)', v, v2)
-                  @alt.calculate_side_and_angle
-                end
-                
-                calculate_two_sides
-                break
-              end
-            end
-            break
-          end
+        v, r = first(angles.known)
+        
+        unless side(v)
+          side[v] = sqrt sq(sides(r)).inject(&:+) -
+            2 * sides(r).inject(&:*) * cos(angle(v))
+          equation('$1=\sqrt{$2^2+$3^2-2 * $2 * $3 * \cos(@1)}', v, *r)
+          calculate_three_angles
+          return
         end
+        
+        v2, r2 = first sides.known(r)
+        angle[v2] = asin sin(angle(v)) * side(v2) / side(v)
+        equation('@2=\arcsin\left(\frac{\sin(@1) * $2}{$1}\right)', v, v2)
+        
+        if ambiguous_case?(v, v2)
+          @alt = CosSinCalc::Triangle.new(sides, angles, self)
+          @alt.angle[v2] = PI - angle(v2)
+          @alt.equation('@2=@pi-\arcsin\left(\frac{\sin(@1) * $2}{$1}\right)', v, v2)
+          @alt.calculate_side_and_angle
+        end
+        
+        calculate_two_sides
       end
       
       # Calculates up to two unknown sides when at least one side and two angles are known.
       def calculate_two_sides
         calculate_last_angle
-        
-        each do |v, r|
-          if side(v)
-            each(r) do |v2|
-              unless side(v2)
-                side[v2] = sin(angle(v2)) * side(v) / sin(angle(v))
-                equation('$2=\frac{\sin(@2) * $1}{\sin(@1)}', v, v2)
-              end
-            end
-            break
-          end
+        v, r = first(sides.known)
+
+        each sides.unknown(r) do |v2|
+          side[v2] = sin(angle(v2)) * side(v) / sin(angle(v))
+          equation('$2=\frac{\sin(@2) * $1}{\sin(@1)}', v, v2)
         end
       end
       
       # Calculates the last unknown angle.
       def calculate_last_angle
-        each do |v, r|
-          unless angle(v)
-            angle[v] = PI - angles(r).inject(&:+)
-            equation('@1=@pi-@2-@3', v, *r)
-            break
-          end
-        end
+        v, r = first(angles.unknown)
+        angle[v] = PI - angles(r).inject(&:+)
+        equation('@1=@pi-@2-@3', v, *r)
       end
       
       # Calculates and returns whether the triangle has multiple solutions.
