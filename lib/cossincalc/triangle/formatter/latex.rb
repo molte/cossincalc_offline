@@ -31,7 +31,7 @@ EOT
         # The filename should be provided without the .pdf extension.
         def save_pdf(filename)
           save_tex(filename)
-          Dir.chdir(File.dirname(filename)) { `pdflatex "#{File.basename(filename)}.tex"` }
+          Dir.cd_to(filename) { |basename| `pdflatex "#{basename}.tex"` }
         end
         
         # Returns the content of the LaTeX document.

@@ -31,7 +31,9 @@ EOT
         # The filename should be provided without the .png extension.
         def save_png(filename)
           save_svg(filename)
-          system("convert \"#{filename}.svg\" \"#{filename}.png\"") || system("rsvg-convert \"#{filename}.svg\" -o \"#{filename}.png\"")
+          Dir.cd_to(filename) do |basename|
+            system("convert \"#{basename}.svg\" \"#{basename}.png\"") || system("rsvg-convert \"#{basename}.svg\" -o \"#{basename}.png\"")
+          end
         end
         
         # Saves a drawing of the triangle as an SVG file.

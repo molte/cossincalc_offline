@@ -16,3 +16,10 @@ unless :to_proc.respond_to?(:to_proc)
     end
   end
 end
+
+# Changes working directory to the directory in which the file of the given path
+# resides, and executes the given block within this directory. Passes the
+# basename of the file (including extension) as an argument to the block.
+def Dir.cd_to(filepath)
+  Dir.chdir(File.dirname(filepath)) { yield(File.basename(filepath)) }
+end
