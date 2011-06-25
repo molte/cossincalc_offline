@@ -3,7 +3,7 @@
 ## Copyright:: Copyright 2007 William Morgan
 ## License::   the same terms as ruby itself
 
-require 'date'
+## Mofified 2011-06-25: All references to Date type removed!
 
 module Trollop
 
@@ -47,12 +47,12 @@ class Parser
   ##
   ## A value of +io+ corresponds to a readable IO resource, including
   ## a filename, URI, or the strings 'stdin' or '-'.
-  SINGLE_ARG_TYPES = [:int, :integer, :string, :double, :float, :io, :date]
+  SINGLE_ARG_TYPES = [:int, :integer, :string, :double, :float, :io]
 
   ## The set of values that indicate a multiple-parameter option (i.e., that
   ## takes multiple space-separated values on the commandline) when passed as
   ## the +:type+ parameter of #opt.
-  MULTI_ARG_TYPES = [:ints, :integers, :strings, :doubles, :floats, :ios, :dates]
+  MULTI_ARG_TYPES = [:ints, :integers, :strings, :doubles, :floats, :ios]
 
   ## The complete set of legal values for the +:type+ parameter of #opt.
   TYPES = FLAG_TYPES + SINGLE_ARG_TYPES + MULTI_ARG_TYPES
@@ -140,7 +140,6 @@ class Parser
         when 'Integer'; :int
         when 'Float'; :float
         when 'IO'; :io
-        when 'Date'; :date
         else
           raise ArgumentError, "unsupported argument type '#{opts[:type].class.name}'"
         end
@@ -168,7 +167,6 @@ class Parser
       when TrueClass, FalseClass; :flag
       when String; :string
       when IO; :io
-      when Date; :date
       when Array
         if opts[:default].empty?
           raise ArgumentError, "multiple argument type cannot be deduced from an empty array for '#{opts[:default][0].class.name}'"
@@ -178,7 +176,6 @@ class Parser
         when Numeric; :floats
         when String; :strings
         when IO; :ios
-        when Date; :dates
         else
           raise ArgumentError, "unsupported multiple argument type '#{opts[:default][0].class.name}'"
         end
@@ -377,8 +374,6 @@ class Parser
         vals[sym] = params.map { |pg| pg.map { |p| p.to_s } }
       when :io, :ios
         vals[sym] = params.map { |pg| pg.map { |p| parse_io_parameter p, arg } }
-      when :date, :dates
-        vals[sym] = params.map { |pg| pg.map { |p| parse_date_parameter p, arg } }
       end
 
       if SINGLE_ARG_TYPES.include?(opts[:type])
@@ -407,19 +402,6 @@ class Parser
     vals
   end
 
-  def parse_date_parameter param, arg #:nodoc:
-    begin
-      begin
-        time = Chronic.parse(param)
-      rescue NameError
-        # chronic is not available
-      end
-      time ? Date.new(time.year, time.month, time.day) : Date.parse(param)
-    rescue ArgumentError => e
-      raise CommandlineError, "option '#{arg}' needs a date"
-    end
-  end
-
   ## Print the help message to +stream+.
   def educate stream=$stdout
     width # just calculate it now; otherwise we have to be careful not to
@@ -439,8 +421,6 @@ class Parser
         when :floats; " <f+>"
         when :io; " <filename/uri>"
         when :ios; " <filename/uri+>"
-        when :date; " <date>"
-        when :dates; " <date+>"
         end
     end
 
